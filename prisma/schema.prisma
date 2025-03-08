@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id            String          @id @default(uuid())
+  name          String
+  description   String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  status        StatusProject   @default(active)
+  ownerId       String?         @unique
+  owner         User?           @relation("OwnedProjects", fields: [ownerId], references: [id])
+  tickets       Ticket[]
+  User          User[]
+  ProjectMember ProjectMember[]
+}
+
+model ProjectMember {
+  id        String      @id @default(uuid())
+  projectId String
+  userId    String
+  role      ProjectRole @default(MEMBER)
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id                String          @id @default(uuid())
+  name              String
+  email             String          @unique
+  username          String          @unique
+  password          String
+  role              String
+  // projects Project[] @relation("ProjectMembers")
+  // ownedProjects Project[] @relation("ProjectOwner")
+  // projectMembers ProjectMember[]
+  ownedProjects     Project[]       @relation("OwnedProjects")
+  projectMemberShip ProjectMember[]
+  tickets           Ticket[]        @relation("TicketAssignments")
+  Project           Project?        @relation(fields: [projectId], references: [id])
+  projectId         String?
+  RefreshToken      RefreshToken[]
+  Ticket            Ticket?
+  ticketId          String?        @unique
+}
+
+model Ticket {
+  id          String         @id @default(uuid())
+  title       String
+  status      TicketStatus   @default(OPEN)
+  priority    TicketPriority @default(LOW)
+  projectId   String?
+  project     Project?       @relation(fields: [projectId], references: [id])
+  userId      String?        @unique
+  user        User?          @relation(fields: [userId], references: [id])
+  assignments User[]         @relation("TicketAssignments")
+}
+
+model BlacklistedToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+enum StatusProject {
+  active
+  archive
+  pending
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ProjectRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}

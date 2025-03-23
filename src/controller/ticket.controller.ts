@@ -1,13 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
+import Redis from "ioredis";
+import redis from "../shared/redisClient";
+
 
 
 const prisma = new PrismaClient()
 
 export const findAllTicket = async (req: Request, res: Response): Promise<void> => {
   try {
-    const {projectId} = req.params
-    console.log("Project ID:", projectId);
 
     const tickets = await prisma.ticket.findMany({
       include: {
@@ -15,10 +16,12 @@ export const findAllTicket = async (req: Request, res: Response): Promise<void> 
         project: true
       }
     })
+    
+    const cahceTickets = await redis.get(`ticket: ${tickets}`)
     res.status(200).json({
       message: 'success',
       data: {
-        tickets
+        cahceTickets
       },
     })
   } catch (err) {

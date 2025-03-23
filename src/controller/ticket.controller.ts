@@ -1,16 +1,28 @@
 import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
+import Redis from "ioredis";
+import redis from "../shared/redisClient";
+
+
 
 const prisma = new PrismaClient()
 
 export const findAllTicket = async (req: Request, res: Response): Promise<void> => {
   try {
-    const tickets = await prisma.ticket.findMany()
+
+    const tickets = await prisma.ticket.findMany({
+      include: {
+        assignments: true,
+        project: true
+      }
+    })
+    
+    const cahceTickets = await redis.get(`ticket: ${tickets}`)
     res.status(200).json({
       message: 'success',
       data: {
-        tickets
-      }
+        cahceTickets
+      },
     })
   } catch (err) {
     res.status(500).json({
@@ -45,98 +57,83 @@ export const findTicketById = async (req: Request, res: Response): Promise<void>
 
 export const createTicket = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.id;
+    const {  status, title, priority, assignments = [] } = req.body; // Default assignments to an empty array
+    const { projectId } = req.params;
 
-    // Check if userId exists
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: 'User is not found',
-      });
-      return; // Ensure the function exits after sending the response
-    }
-
-    // Find the user in the database
-    const findUser = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-
-    // Check if the user has the required role (PM or QA)
-    if (!findUser || (findUser?.role !== 'PM' && findUser?.role !== 'QA')) {
-      res.status(403).json({ message: 'Cannot create a ticket; you are not a PM or QA' });
-      return; // Ensure the function exits after sending the response
-    }
-
-    const { projectId } = req.body;
 
     // Check if projectId is provided
-    if (!projectId) { // Fix: Check if projectId is falsy
-      res.status(400).json({
-        message: 'Project ID is required',
-      });
-      return; // Ensure the function exits after sending the response
+    if (!projectId) {
+       res.status(400).json({ message: 'Project ID is required' });
     }
 
-    // Find the project in the database
-    const findProject = await prisma.project.findUnique({
-      where: {
-        id: projectId,
-      },
-    });
+    // Find the project by projectId
+    const findProject = await prisma.project.findUnique({ where: { id: projectId } });
 
-    // Check if the project exists
+    // Check if project exists
     if (!findProject) {
-      res.status(404).json({
-        message: 'Project not found',
-      });
-      return; // Ensure the function exits after sending the response
+       res.status(404).json({ message: 'Project not found' });
     }
 
-    // Extract ticket details from the request body
-    const { status, title, priority } = req.body;
 
-    // Create the ticket in the database
+    // Create the ticket
     const ticket = await prisma.ticket.create({
       data: {
         title,
         status,
         priority,
-        userId,
         projectId,
+        assignments: {
+          connect: assignments.map((id: string) => ({ id })) // Ensure you are mapping over the correct field
+        }
       },
     });
 
-    // Send a success response
-    res.status(201).json({
-      message: 'Ticket created successfully',
-      data: {
-        ticket,
-      },
-    });
+    res.status(201).json({ message: 'Ticket created successfully', data: { ticket } });
   } catch (err) {
     console.log("Error:", err);
-    res.status(500).json({
-      message: 'Failed to create ticket',
-    });
+    res.status(500).json({ message: 'Failed to create ticket' });
   }
 };
 
+
 export const changeStatusAndPrio = async (req: Request, res: Response): Promise<void> => {
   try {
+    const { projectId, id } = req.params;
 
-    const { projecId, userId } = req.body
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId
+      }
+    });
 
-    if (!projecId) {
-      res.status(404).json({
-        message: 'project is not found'
-      })
+    const { status, title, priority, assignments } = req.body;
+
+
+    const validPriorities = ['LOW', 'MEDIUM', 'HIGH', ' CRITICAL']
+    if (priority && !validPriorities.includes(priority)) {
+      res.status(400).json({ message: 'Invalid priority value' });
     }
 
-    const project = prisma.project.findUnique({
+    const updatedTicket = await prisma.ticket.update({
       where: {
-        id: projecId
+        id: id
+      },
+      data: {
+        title,
+        status,
+        priority,
+        projectId,
+        assignments: {
+          connect: assignments.map((id: string) => ({ id }))
+        }
+      }
+    })
+
+    res.status(200).json({
+      success: true,
+      message: 'ticket has been update',
+      data: { 
+        updatedTicket
       }
     })
 
@@ -146,57 +143,25 @@ export const changeStatusAndPrio = async (req: Request, res: Response): Promise<
       })
     }
 
-    if (!userId) {
-      res.status(404).json({
-        message: 'User is not found'
-      })
-    }
-
-    const user = prisma.user.findUnique({
-      where: {
-        id: userId
-      }
-    })
-
-    if (!user) {
-      res.status(404).json({
-        message: 'User is not found'
-      })
-    }
-
 
   } catch (err) {
     res.status(500).json({
       message: 'failed to update ticket'
     })
   }
-
-  const { status, title, priority } = req.body;
-  const { ticketId } = req.params
-
-  const updatedTicket = await prisma.ticket.update({
-    where: {
-      id: ticketId
-    },
-    data: {
-      title,
-      status,
-      priority
-    }
-  })
-
-  res.status(200).json({
-    success: true,
-    message: 'ticket has been update',
-    data: { 
-      updatedTicket
-    }
-  })
+  
 }
 
 export const deletedTicket = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.body
+    const { ticketId } = req.params;
+
+    const ticketWithId = await prisma.ticket.findUnique({
+      where: {
+        id: ticketId
+      }
+    })
 
     const users = await prisma.user.findUnique({
       where: {
@@ -212,6 +177,20 @@ export const deletedTicket = async (req: Request, res: Response): Promise<void> 
         message: 'only PM or QA cant deleted ticket '
       })
     }
+
+    const deleteTicket = prisma.ticket.delete({
+      where: {
+        id: ticketWithId?.id
+      }
+    })
+
+    res.status(200).json({
+      success: true,
+      message: 'ticket has been deleted',
+      data: {
+        deleteTicket
+      }
+    })
   } catch (err) {
     res.status(500).json({
       message: 'ticket cannot deleted'

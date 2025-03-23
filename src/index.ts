@@ -5,11 +5,29 @@ import userRouter from './routes/userRoutes'
 import authRouter from './routes/authRoutes'
 import ticketRouter from './routes/ticketRoutes'
 import { authMiddleware } from "./middleware/auth.middleware";
+import http from 'http'
+import { Server } from "socket.io";
+
 
 const app  = express()
+const server = http.createServer(app)
+const io = new Server(server)
 
 app.use(cors())
 app.use(express.json())
+
+// socket .IO connection
+io.on('connection', (socket) => {
+  console.log(' a user connection')
+
+  socket.on('new comment', (comment) => {
+    io.emit('commentAdd', comment)
+  })
+
+  socket.on('disconnect', () => {
+    console.log('User disconnect')
+  })
+})
 
 // routes
 app.use('/api/projects', authMiddleware, projectRoutes)

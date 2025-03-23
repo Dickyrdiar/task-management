@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { changeStatusAndPrio, createTicket, findAllTicket } from "../controller/ticket.controller";
 
-const router = Router()
+const router = Router({ mergeParams: true })
 
 router.get('/', findAllTicket)
 router.post('/', createTicket)

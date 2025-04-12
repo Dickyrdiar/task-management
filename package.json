@@ -7,6 +7,8 @@
     "@types/bun": "latest",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/passport": "^1.0.17",
+    "@types/passport-github2": "^1.2.9",
     "prisma": "^6.4.1",
     "tsx": "^4.19.3"
   },

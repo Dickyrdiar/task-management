@@ -7,6 +7,17 @@ import redis from "../shared/redisClient";
 
 const prisma = new PrismaClient()
 
+export const searchTicket = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { paramsSearch } = req.params
+
+  } catch (err) {
+    res.status(500).json({
+      message: 'fetch all ticket is failed'
+    })
+  }
+}
+
 export const findAllTicket = async (req: Request, res: Response): Promise<void> => {
   try {
 

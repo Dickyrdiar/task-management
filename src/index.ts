@@ -4,6 +4,7 @@ import projectRoutes from './routes/projectRoutes'
 import userRouter from './routes/userRoutes'
 import authRouter from './routes/authRoutes'
 import ticketRouter from './routes/ticketRoutes'
+import LoginGithub from './routes/githubAuthRoutes'
 import { authMiddleware } from "./middleware/auth.middleware";
 import http from 'http'
 import { Server } from "socket.io";
@@ -30,6 +31,7 @@ io.on('connection', (socket) => {
 })
 
 // routes
+app.use('/api/githubLogin', LoginGithub)
 app.use('/api/projects', authMiddleware, projectRoutes)
 app.use('/api/users', authMiddleware, userRouter)
 app.use('/api/auth', authRouter)

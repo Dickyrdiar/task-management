@@ -92,7 +92,7 @@ export const findProjectById = async (req: Request, res: Response): Promise<void
 
 export const createProject = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.id
+    const { userId } = req.params
 
     if (!userId) {
       res.status(401).json({

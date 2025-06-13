@@ -14,17 +14,16 @@ datasource db {
 }
 
 model Project {
-  id            String          @id @default(uuid())
-  name          String
-  description   String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  status        StatusProject   @default(active)
-  ownerId       String?         @unique
-  owner         User?           @relation("OwnedProjects", fields: [ownerId], references: [id])
-  tickets       Ticket[]
-  User          User[]
-  ProjectMember ProjectMember[]
+  id             String          @id @default(uuid())
+  name           String
+  description    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  status         StatusProject   @default(active)
+  ownerId        String // Removed the ? to make it required
+  owner          User            @relation("OwnedProjects", fields: [ownerId], references: [id])
+  tickets        Ticket[]
+  projectMembers ProjectMember[]
 }
 
 model ProjectMember {
@@ -60,8 +59,6 @@ model User {
   ownedProjects     Project[]       @relation("OwnedProjects")
   projectMemberShip ProjectMember[]
   tickets           Ticket[]        @relation("TicketAssignments")
-  Project           Project?        @relation(fields: [projectId], references: [id])
-  projectId         String?
   RefreshToken      RefreshToken[]
   Ticket            Ticket?         @relation(fields: [ticketId], references: [id])
   ticketId          String?         @unique

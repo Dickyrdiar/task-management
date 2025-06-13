@@ -1,16 +1,21 @@
 import type { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../utils/jwt';
 
-// Extend Request type untuk menyimpan data user
+
+interface User {
+  id: string;
+  email: string;
+  role: string;
+  username: string;
+}
+
 declare global {
   namespace Express {
-    interface Request {
-      user?: {
-        id: string;
-        email: string;
-        role: string;
-        username: string;
-      }
+    interface User {
+      id: string;
+      email: string;
+      role: string;
+      username: string;
     }
   }
 }

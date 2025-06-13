@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
 // routes
 app.use('/api/githubLogin', LoginGithub)
 app.use('/api/projects', authMiddleware, projectRoutes)
-app.use('/api/users', authMiddleware, userRouter)
+app.use('/api/users', userRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/projects/:projectId/tickets', authMiddleware, ticketRouter)
 

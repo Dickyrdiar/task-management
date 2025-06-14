@@ -91,6 +91,16 @@ model Comment {
   Ticket Ticket[] @relation("TicketComments")
 }
 
+model TokenBlacklist {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([expiresAt])
+}
+
 enum StatusProject {
   active
   archive

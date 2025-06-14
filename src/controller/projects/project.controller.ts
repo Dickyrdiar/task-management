@@ -140,7 +140,7 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
 
 export const addUserToProject = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { projectId, userId, role } = req.body
+    const { userId, role, projectId } = req.body
 
     const project = await prisma.project.findUnique({
       where: { id: projectId }
@@ -184,7 +184,7 @@ export const addUserToProject = async (req: Request, res: Response): Promise<voi
       data: {
         projectId,
         userId,
-        role: role as ProjectRole
+        role: role as ProjectRole || 'MEMBER'
       },
       include: {
         user: true,
@@ -200,6 +200,43 @@ export const addUserToProject = async (req: Request, res: Response): Promise<voi
   } catch (err) {
     console.log("error", err)
   }
+}
+
+export const deletedMemberProject = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId  } = req.params
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+
+    if (!user) {
+      res.status(404).json({
+        message: 'user is not found'
+      })
+    }
+
+    const deletedMember = await prisma.projectMember.delete({
+      where: {
+        projectId_userId: {
+          projectId: req.params.projectId,
+          userId: userId
+        }
+      }
+    })
+
+    res.status(201).json({
+      message: 'user has been delete from member proeject',
+      data: deletedMember
+    })
+  } catch (err) {
+    res.status(500).json({
+      message: 'failed deleted member'
+    })
+  }
+
+
 }
 
 export const deletedProject = async (req: Request, res: Response): Promise<void> => {

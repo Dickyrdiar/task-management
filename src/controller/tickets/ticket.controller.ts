@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
 import Redis from "ioredis";
-import redis from "../shared/redisClient";
+import redis from "../../shared/redisClient";
 
 
 
@@ -23,16 +23,15 @@ export const findAllTicket = async (req: Request, res: Response): Promise<void> 
 
     const tickets = await prisma.ticket.findMany({
       include: {
-        assignments: true,
-        project: true
+        project: true,
       }
     })
     
-    const cahceTickets = await redis.get(`ticket: ${tickets}`)
+    const ticket = await redis.get(`ticket: ${tickets}`)
     res.status(200).json({
       message: 'success',
       data: {
-        cahceTickets
+       tickets
       },
     })
   } catch (err) {
@@ -121,7 +120,7 @@ export const changeStatusAndPrio = async (req: Request, res: Response): Promise<
 
 
     const validPriorities = ['LOW', 'MEDIUM', 'HIGH', ' CRITICAL']
-    if (priority && !validPriorities.includes(priority)) {
+    if (priority || !validPriorities.includes(priority)) {
       res.status(400).json({ message: 'Invalid priority value' });
     }
 
@@ -156,6 +155,7 @@ export const changeStatusAndPrio = async (req: Request, res: Response): Promise<
 
 
   } catch (err) {
+    console.error("error", err)
     res.status(500).json({
       message: 'failed to update ticket'
     })

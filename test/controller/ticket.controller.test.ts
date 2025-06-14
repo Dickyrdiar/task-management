@@ -1,6 +1,6 @@
 import request from 'supertest';
 import express from 'express';
-import { findAllTicket, findTicketById, createTicket, changeStatusAndPrio, deletedTicket } from '../../src/controller/ticket.controller'; // Replace with actual file path
+import { findAllTicket, findTicketById, createTicket, changeStatusAndPrio, deletedTicket } from '../../src/controller/tickets/ticket.controller'; // Replace with actual file path
 import { PrismaClient } from '@prisma/client';
 
 jest.mock('@prisma/client', () => {

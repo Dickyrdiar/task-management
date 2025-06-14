@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { changeStatusAndPrio, createTicket, findAllTicket } from "../controller/ticket.controller";
+import { changeStatusAndPrio, createTicket, findAllTicket } from "../controller/tickets/ticket.controller";
+// import { changeStatusAndPrio, createTicket, findAllTicket } from "../controller/tickets/ticket.controller";
 
 const router = Router({ mergeParams: true })
 

@@ -11,6 +11,10 @@ export const searchTicket = async (req: Request, res: Response): Promise<void> =
   try {
     const { paramsSearch } = req.params
 
+
+    // const reasultSearch = await prisma.ticket.findUnique({
+    //   where: {  }
+    // })
   } catch (err) {
     res.status(500).json({
       message: 'fetch all ticket is failed'
@@ -161,6 +165,53 @@ export const changeStatusAndPrio = async (req: Request, res: Response): Promise<
     })
   }
   
+}
+
+export const CommentTicker =  async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { ticketId, userId, content } = req.body
+
+    const tickets = await prisma.ticket.findUnique({
+      where: { id: ticketId }
+    })
+
+    if (!tickets) {
+      res.status(404).json({
+        message: 'tickets is not found'
+      })
+    }
+
+    const users = await prisma.user.findUnique({
+      where: { id: userId }
+    })
+
+    if (!users) {
+       res.status(404).json({
+        message: 'users is not found'
+      })
+    }
+
+    const commentTicket = await prisma.comment.create({
+      data: {
+
+        ticketId,
+        userId,
+        content
+      }
+    })
+
+    res.status(201).json({
+      message: 'comment has been added',
+      data: {
+        commentTicket
+      }
+    })
+
+  } catch (err) {
+    res.status(500).json({
+      message: 'comment is not send'
+    })
+  }
 }
 
 export const deletedTicket = async (req: Request, res: Response): Promise<void> => {

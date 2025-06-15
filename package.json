@@ -14,18 +14,20 @@
     "vercel": "^43.1.0"
   },
   "scripts": {
-    "dev": "nodemon --exec bun run src/index.ts",
-    "start": "bun run src/index.ts",
-    "test": "bun test",
+    "build": "bun run build.ts",
+    "dev": "netlify dev",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "bun run prisma/migrate.ts",
+    "netlify:deploy": "netlify deploy --prod"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@netlify/functions": "^4.1.5",
     "@prisma/client": "6.4.1",
     "@prisma/migrate": "^6.9.0",
+    "@types/aws-lambda": "^8.10.149",
     "@types/cors": "^2.8.17",
     "@types/jest": "^29.5.14",
     "@types/supertest": "^6.0.2",

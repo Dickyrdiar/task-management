@@ -1,5 +1,5 @@
 [build.environment]
-  GH_TOKEN = "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"
+  GH_TOKEN = ""
 
 [build]
 command = "git config --global url.\"https://${GH_TOKEN}@github.com\".insteadOf \"https://github.com\" && bun install && bun run build"

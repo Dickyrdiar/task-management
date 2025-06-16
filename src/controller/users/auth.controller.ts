@@ -80,6 +80,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     })
   } catch (err) {
     res.status(500).json({
+      error: err,
       message: 'logout is failed'
     })
   }

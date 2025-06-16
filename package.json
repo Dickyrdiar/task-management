@@ -13,11 +13,13 @@
     "tsx": "^4.19.3",
     "vercel": "^43.1.0"
   },
-  "scripts": {
+ "scripts": {
     "build": "bun run prisma generate && bun run build:functions",
     "build:functions": "mkdir -p dist && cp -r netlify/functions dist/",
-    "dev": "netlify dev",
-    "prisma:generate": "prisma generate"
+    "start": "bun run ./netlify/functions/server.ts",  
+    "dev": "bun run src/index.ts", 
+    "prisma:generate": "prisma generate",
+    "netlify:dev": "netlify dev"    
   },
   "peerDependencies": {
     "typescript": "^5.8.2"

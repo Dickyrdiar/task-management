@@ -5,6 +5,11 @@
 command = "git config --global url.\"https://${GH_TOKEN}@github.com\".insteadOf \"https://github.com\" && bun install && bun run build"
 publish = "dist"
 
+[build.environment]
+  PYTHON_VERSION = "3.11"
+  RUBY_VERSION = "3.2.2"
+  GO_VERSION = "1.21"
+
 [functions]
 directory = "netlify/functions"
 

@@ -14,12 +14,16 @@
     "vercel": "^43.1.0"
   },
   "scripts": {
-    "dev": "nodemon --exec bun run src/index.ts",
-    "start": "bun run src/index.ts",
-    "test": "bun test",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "build": "bun build src/index.ts --outdir ./dist"
+    // "dev": "nodemon --exec bun run src/index.ts",
+    // "start": "bun run src/index.ts",
+    // "test": "bun test",
+    // "prisma:generate": "prisma generate",
+    // "prisma:migrate": "prisma migrate dev",
+    // "build": "bun build src/index.ts --outdir ./dist",
+    "build": "bun run prisma generate && bun run build:functions",
+    "build:functions": "mkdir -p dist && cp -r netlify/functions dist/",
+    "dev": "netlify dev",
+    "prisma:generate": "prisma generate"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"

@@ -1,19 +1,16 @@
-[build.environment]
-  GH_TOKEN = "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"
-
 [build]
-command = "git config --global url.\"https://${GH_TOKEN}@github.com\".insteadOf \"https://github.com\" && bun install && bun run build"
-publish = "dist"
-
-[build.environment]
-  PYTHON_VERSION = "3.11"
-  RUBY_VERSION = "3.2.2"
-  GO_VERSION = "1.21"
+  command = "bun install && bun run prisma generate && bun run build"
+  publish = "dist"
 
 [functions]
-directory = "netlify/functions"
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [dev]
   framework = "#custom"
   command = "bun run dev"
   port = 8888
+
+[build.environment]
+  NODE_VERSION = "18"
+  BUN_VERSION = "1.0.0" # or latest version

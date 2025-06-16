@@ -1,5 +1,5 @@
 [build]
-  command = "bun run build"
+  command = "bun install && bun run prisma generate && bun run build"
   publish = "dist"
 
 [functions]
@@ -10,3 +10,7 @@
   framework = "#custom"
   command = "bun run dev"
   port = 8888
+
+[build.environment]
+  NODE_VERSION = "18"
+  BUN_VERSION = "1.0.0" # or latest version

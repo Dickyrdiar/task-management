@@ -1,10 +1,10 @@
 // dev-server.ts
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { handler } from './src/app'
+import app from './src/app'
 
-const app = handler()
-const server = createServer(app)
+const handler = app
+const server = createServer(handler)
 const io = new Server(server, {
   cors: { origin: '*' },
 })

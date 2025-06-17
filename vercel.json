@@ -11,8 +11,5 @@
       "src": "/(.*)",
       "dest": "api/index.ts"
     }
-  ],
-  "env": {
-  "DATABASE_URL": "@database_url"
-}
+  ]
 }

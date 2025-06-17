@@ -11,7 +11,8 @@
     "moduleResolution": "node"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "api/index.ts"
   ],
   "exclude": [
     "node_modules"

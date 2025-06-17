@@ -23,5 +23,7 @@ export const handler = () => {
     res.status(200).json("Express + TypeScript + Bun + Prisma API");
   })
 
-  return app
+  return (req: any, res: any) => {
+    res.status(200).json({ message: 'Hello from app handler' })
+  }
 }

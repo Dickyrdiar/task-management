@@ -1,7 +1,7 @@
 // dev-server.ts
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import app from './src/app'
+import app from './api/app'
 
 const handler = app
 const server = createServer(handler)

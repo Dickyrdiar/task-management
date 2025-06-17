@@ -1,11 +1,11 @@
 import express from 'express'
 import cors from 'cors'
-import projectRoutes from './routes/projectRoutes'
-import userRouter from './routes/userRoutes'
-import authRouter from './routes/authRoutes'
-import ticketRouter from './routes/ticketRoutes'
-import LoginGithub from './routes/githubAuthRoutes'
-import { authMiddleware } from './middleware/auth.middleware'
+import projectRoutes from '../src/routes/projectRoutes'
+import userRouter from '../src/routes/userRoutes'
+import authRouter from '../src/routes/authRoutes'
+import ticketRouter from '../src/routes/ticketRoutes'
+import LoginGithub from '../src/routes/githubAuthRoutes'
+import { authMiddleware } from '../src/middleware/auth.middleware'
 
 const app = express()
 

@@ -14,10 +14,10 @@
     "vercel": "^43.1.0"
   },
   "scripts": {
-    "dev": "bun run src/index.ts",
+    "dev": "bun run dev-server.ts", 
+    "vercel-build": "tsc",
     "build": "bunx prisma generate && tsc",
-    "start": "bun run dist/index.js",
-    "vercel-build": "bunx prisma generate && tsc"
+    "start": "bun run dist/index.js"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"

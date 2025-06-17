@@ -1,7 +1,7 @@
 {
   "name": "task-manage-app",
   "module": "index.ts",
-  "type": "module",
+ "type": "commonjs",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bun": "latest",

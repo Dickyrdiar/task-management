@@ -7,23 +7,20 @@ import ticketRouter from './routes/ticketRoutes'
 import LoginGithub from './routes/githubAuthRoutes'
 import { authMiddleware } from './middleware/auth.middleware'
 
-export const handler = () => {
-  const app = express()
-  app.use(cors())
-  app.use(express.json())
+const app = express()
 
-  // routes
-  app.use('/api/githubLogin', LoginGithub)
-  app.use('/api/projects', authMiddleware, projectRoutes)
-  app.use('/api/users', userRouter)
-  app.use('/api/auth', authRouter)
-  app.use('/api/projects/:projectId/tickets', authMiddleware, ticketRouter)
+app.use(cors())
+app.use(express.json())
 
-  app.get("/", (req, res) => {
-    res.status(200).json("Express + TypeScript + Bun + Prisma API");
-  })
+// routes
+app.use('/api/githubLogin', LoginGithub)
+app.use('/api/projects', authMiddleware, projectRoutes)
+app.use('/api/users', userRouter)
+app.use('/api/auth', authRouter)
+app.use('/api/projects/:projectId/tickets', authMiddleware, ticketRouter)
 
-  return (req: any, res: any) => {
-    res.status(200).json({ message: 'Hello from app handler' })
-  }
-}
+app.get("/", (req, res) => {
+  res.status(200).json("Express + TypeScript + Bun + Prisma API")
+})
+
+export default app

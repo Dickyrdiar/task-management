@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ES2020",
+    "module": "ESNext",
     "moduleResolution": "node",
-    "baseUrl": ".",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -11,7 +10,7 @@
     "outDir": "dist"
   },
   "include": [
-    "src",
-    "api"
+    "api/**/*.ts",
+    "routes/**/*.ts"
   ]
 }

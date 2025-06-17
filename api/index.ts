@@ -1,6 +1,6 @@
 import { type VercelRequest, type VercelResponse } from '@vercel/node'
-import app from '../src/app'
+import app from './app'
 
 export default function (req: VercelRequest, res: VercelResponse) {
-  app(req, res) // langsung proxy request ke Express
+  app(req, res) 
 }

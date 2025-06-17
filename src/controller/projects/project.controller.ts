@@ -7,7 +7,7 @@ export const findAllProject = async (req: Request, res: Response): Promise<void>
   try {
     const project = await prisma.project.findMany({
       include: {
-        ProjectMember: {
+        projectMembers: {
           include: {
             user: {
               select: {
@@ -53,7 +53,7 @@ export const findProjectById = async (req: Request, res: Response): Promise<void
       where: { id },
       include: {
         owner: true,
-        ProjectMember: {
+        projectMembers: {
           include: {
             user: true
           }
@@ -92,7 +92,7 @@ export const findProjectById = async (req: Request, res: Response): Promise<void
 
 export const createProject = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user?.id
+    const userId = req?.user
 
     if (!userId) {
       res.status(401).json({
@@ -102,32 +102,30 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
       return
     }
 
-
     const { name, description } = req.body;
-    const findUser = await prisma.user.findUnique({
-      where: { 
-        id: userId,
-        role: "PM" 
-      }
-    })
 
-    if (findUser?.role !== "PM" && findUser?.role !== "QA") {
-      res.status(500).json({ message: 'cannot create project you are not PM' })
+    if (userId?.role !== 'PM' && userId?.role !== 'QA') {
+       res.status(500).json({ message: 'cannot create project you are not PM' })
     }
 
     const project = await prisma.project.create({
       data: {
         name,
         description,
-        ownerId: userId,
+        ownerId: userId.id,
+      },
+      include: {
+        owner: true
       }
     });
+
+    console.log("project", project)
 
     res.status(201).json({
       success: true,
       data: {
         project,
-        owner: findUser,
+        owner: userId,
       }
     })
 
@@ -142,7 +140,7 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
 
 export const addUserToProject = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { projectId, userId, role } = req.body
+    const { userId, role, projectId } = req.body
 
     const project = await prisma.project.findUnique({
       where: { id: projectId }
@@ -186,7 +184,7 @@ export const addUserToProject = async (req: Request, res: Response): Promise<voi
       data: {
         projectId,
         userId,
-        role: role as ProjectRole
+        role: role as ProjectRole || 'MEMBER'
       },
       include: {
         user: true,
@@ -202,6 +200,43 @@ export const addUserToProject = async (req: Request, res: Response): Promise<voi
   } catch (err) {
     console.log("error", err)
   }
+}
+
+export const deletedMemberProject = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId  } = req.params
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId
+      }
+    })
+
+    if (!user) {
+      res.status(404).json({
+        message: 'user is not found'
+      })
+    }
+
+    const deletedMember = await prisma.projectMember.delete({
+      where: {
+        projectId_userId: {
+          projectId: req.params.projectId,
+          userId: userId
+        }
+      }
+    })
+
+    res.status(201).json({
+      message: 'user has been delete from member proeject',
+      data: deletedMember
+    })
+  } catch (err) {
+    res.status(500).json({
+      message: 'failed deleted member'
+    })
+  }
+
+
 }
 
 export const deletedProject = async (req: Request, res: Response): Promise<void> => {

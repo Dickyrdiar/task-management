@@ -5,26 +5,27 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model Project {
-  id            String          @id @default(uuid())
-  name          String
-  description   String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  status        StatusProject   @default(active)
-  ownerId       String?         @unique
-  owner         User?           @relation("OwnedProjects", fields: [ownerId], references: [id])
-  tickets       Ticket[]
-  User          User[]
-  ProjectMember ProjectMember[]
+  id             String          @id @default(uuid())
+  name           String
+  description    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  status         StatusProject   @default(active)
+  ownerId        String // Removed the ? to make it required
+  owner          User            @relation("OwnedProjects", fields: [ownerId], references: [id])
+  tickets        Ticket[]
+  projectMembers ProjectMember[]
 }
 
 model ProjectMember {
@@ -60,11 +61,13 @@ model User {
   ownedProjects     Project[]       @relation("OwnedProjects")
   projectMemberShip ProjectMember[]
   tickets           Ticket[]        @relation("TicketAssignments")
-  Project           Project?        @relation(fields: [projectId], references: [id])
-  projectId         String?
   RefreshToken      RefreshToken[]
-  Ticket            Ticket?
-  ticketId          String?        @unique
+  Ticket            Ticket?         @relation(fields: [ticketId], references: [id])
+  ticketId          String?         @unique
+  Comment           Comment[]
+  provider          String          @default("local") // 'local', 'github'
+  githubId          String?         @unique
+  avatar            String?
 }
 
 model Ticket {
@@ -74,16 +77,33 @@ model Ticket {
   priority    TicketPriority @default(LOW)
   projectId   String?
   project     Project?       @relation(fields: [projectId], references: [id])
-  userId      String?        @unique
-  user        User?          @relation(fields: [userId], references: [id])
   assignments User[]         @relation("TicketAssignments")
+  comments    Comment[]      @relation("TicketComments")
+
+  Comment Comment[]
+  User    User[]
 }
 
-model BlacklistedToken {
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  ticketId  String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  Ticket Ticket[] @relation("TicketComments")
+}
+
+model TokenBlacklist {
   id        String   @id @default(uuid())
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([expiresAt])
 }
 
 enum StatusProject {

@@ -1,0 +1,41 @@
+[build]
+  command = "bun install && bun run prisma generate && bun run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[build.environment]
+  # Runtime versions
+  NODE_VERSION = "18"
+  BUN_VERSION = "1.0.0"
+  PRISMA_VERSION = "4.15.0"
+  
+  # Database configuration
+  DATABASE_URL = "postgresql://dickyardiar:kurniawan@localhost:5432/task_manage_app?schema=public""
+  DIRECT_DATABASE_URL = "postgresql://dickyardiar:kurniawan@localhost:5432/task_manage_app?schema=public""
+  
+  PRISMA_CLI_QUERY_ENGINE_TYPE = "binary"
+  PRISMA_SCHEMA_ENGINE_PROTOCOL = "graphql"
+  
+  JWT_SECRET = "4d5f55ac4ebd387179ba76a0931ce2ca48edac245cdf5b55c0ac203435456cd86a44faf1a0d9eef46e4863660ca6c5943576a18de696627cf68cc8c11c96af0e618abebf8d6bcda24f16367320d51aaf410492b8837f9c1288f53113ef97f73a3df2a065e633c3b89fd5d720e627674b679268ece72c17e53390492de4ee5a9f2300751ed1d31087db081f852f0532c1b4b01fd012246440e5041d21e7185bc043319d252df4ba5c85e60d1eaa2ec3df6863590db2f4121e98af30ed05da22e38328177c5040360b3a218d3d5a865fa3177610a13b78854dec631af1ee7d4e939255dce6f55f4c76e18e928c0e2251dff2ec2655c8cdb04b0cd63b82ea79ad11"
+
+[context.production.environment]
+  NODE_ENV = "production"
+  DEBUG = "false"
+
+[context.deploy-preview.environment]
+  NODE_ENV = "development"
+  DEBUG = "true"
+
+[dev]
+  framework = "#custom"
+  command = "bun run dev"
+  targetPort = 3001
+  port = 8888
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server/:splat"
+  status = 200

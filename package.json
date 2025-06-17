@@ -14,10 +14,10 @@
     "vercel": "^43.1.0"
   },
   "scripts": {
-    "dev": "bun run dev-server.ts", 
     "vercel-build": "tsc",
-    "build": "tsc",
-    "start": "bun run dist/index.js"
+    "start": "bun run dist/index.js",
+     "dev": "ts-node -r tsconfig-paths/register api/index.ts",
+    "build": "tsc"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"
@@ -48,6 +48,7 @@
     "socket.io": "^4.8.1",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.6",
+    "tsconfig-paths": "^4.2.0",
     "zod": "^3.24.2"
   }
 }

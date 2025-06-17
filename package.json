@@ -15,7 +15,7 @@
   },
   "scripts": {
     "dev": "bun run dev-server.ts",
-    "vercel-build": "tsc",
+    "vercel-build": "npx prisma generate && tsc",
     "build": "tsc",
     "start": "node dist/api/index.js"
   },

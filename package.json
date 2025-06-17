@@ -1,7 +1,7 @@
 {
   "name": "task-manage-app",
   "module": "index.ts",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bun": "latest",
@@ -17,7 +17,7 @@
     "dev": "bun run dev-server.ts",
     "vercel-build": "tsc",
     "build": "tsc",
-    "start": "bun run dist/index.js"
+    "start": "node dist/api/index.js"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"

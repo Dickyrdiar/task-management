@@ -16,7 +16,7 @@
   "scripts": {
     "dev": "bun run dev-server.ts", 
     "vercel-build": "tsc",
-    "build": "bunx prisma generate && tsc",
+    "build": "tsc",
     "start": "bun run dist/index.js"
   },
   "peerDependencies": {

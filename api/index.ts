@@ -1,5 +1,5 @@
 import { type VercelRequest, type VercelResponse } from '@vercel/node'
-import { handler } from '../src/app'
+import { handler } from '@/app'
 
 const app = handler()
 

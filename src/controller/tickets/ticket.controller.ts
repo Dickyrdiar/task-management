@@ -47,14 +47,14 @@ export const findAllTicket = async (req: Request, res: Response): Promise<void> 
 
 export const findTicketById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { ticketId } = req.params
+    const ticketId = req.params.id
 
     const findTicket = await prisma.ticket.findUnique({
       where: {
-        id: ticketId
+        id: String(ticketId)
       }
     })  
-
+    
     res.status(200).json({
       success: true,
       data: {
@@ -64,7 +64,8 @@ export const findTicketById = async (req: Request, res: Response): Promise<void>
   } catch (err) {
     res.status(500).json({
       success: false,
-      message: 'fetch ticket by id is failed'
+      message: 'fetch ticket by id is failed',
+      error: err
     })
   }
 }
@@ -211,6 +212,61 @@ export const CommentTicker =  async (req: Request, res: Response): Promise<void>
     res.status(500).json({
       message: 'comment is not send'
     })
+  }
+}
+
+export const findAllCommentByticket = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { ticketId } = req.params
+    console.log("id", ticketId)
+
+    const findTicket = await prisma.ticket.findUnique({
+      where: {
+        id: ticketId
+      }
+    })
+
+    if (!findTicket) {
+      res.status(400).json({
+        message: 'Ticket not found'
+      });
+    }
+
+    const allComment = await prisma.comment.findMany({
+      where: {
+        ticketId: ticketId
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true
+          }
+        },
+        ticket: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            priority: true,
+          }
+        }
+      },
+    })
+
+    res.status(200).json({
+      message: 'get all data',
+      data: allComment
+    })
+  } catch (err) {
+    res.status(500).send({
+      message: 'Cannot fetch comment',
+      error: err
+    })
+  } finally {
+    await prisma.$disconnect()
   }
 }
 

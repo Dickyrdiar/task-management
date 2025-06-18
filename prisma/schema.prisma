@@ -10,9 +10,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Project {
@@ -62,8 +61,6 @@ model User {
   projectMemberShip ProjectMember[]
   tickets           Ticket[]        @relation("TicketAssignments")
   RefreshToken      RefreshToken[]
-  Ticket            Ticket?         @relation(fields: [ticketId], references: [id])
-  ticketId          String?         @unique
   Comment           Comment[]
   provider          String          @default("local") // 'local', 'github'
   githubId          String?         @unique
@@ -79,21 +76,16 @@ model Ticket {
   project     Project?       @relation(fields: [projectId], references: [id])
   assignments User[]         @relation("TicketAssignments")
   comments    Comment[]      @relation("TicketComments")
-
-  Comment Comment[]
-  User    User[]
 }
 
 model Comment {
   id        String   @id @default(uuid())
   content   String
   ticketId  String
-  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticket    Ticket   @relation("TicketComments", fields: [ticketId], references: [id])
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
-
-  Ticket Ticket[] @relation("TicketComments")
 }
 
 model TokenBlacklist {

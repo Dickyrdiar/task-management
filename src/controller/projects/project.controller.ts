@@ -119,7 +119,6 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
       }
     });
 
-    console.log("project", project)
 
     res.status(201).json({
       success: true,

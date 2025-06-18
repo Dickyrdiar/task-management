@@ -1,25 +1,47 @@
-import type { Request, Response } from "express"
-import { generateToken } from "../utils/jwt"
+import { Request, Response } from 'express';
+import axios from 'axios'
+import dotenv from 'dotenv';
+dotenv.config();
 
-export const authGithubController = (req: Request, res: Response): void => {
-  const { id, email, name } = req.body
+const clientID = process.env.GITHUB_CLIENT_ID
+const clientSecret = process.env.GITHUB_CLIENT_SECRET
+
+export const redirectToGitHub = (_req: Request, res: Response) => {
+  const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientID}&scope=user`;
+  res.redirect(redirectUrl);
+};
+
+export const githubOauthCallback = async (req: Request, res: Response): Promise<void> => {
+ const requestToken = req.query.code as string;
+
   try {
-    if (!id || !email || !name) {
-      res.status(401).json({ message: 'Authentication failed' })
-    }
-    const token = generateToken(id && email && name)
-
-    res.json({
-      success: true,
-      token,
-      user: {
-        id: id,
-        email: email, 
-        name: name
+    const tokenResponse = await axios.post(
+      `https://github.com/login/oauth/access_token`,
+      {
+        client_id: clientID,
+        client_secret: clientSecret,
+        code: requestToken,
+      },
+      {
+        headers: { accept: 'application/json' },
       }
-    })
+    );
+
+    const accessToken = tokenResponse.data.access_token;
+
+    const userResponse = await axios.get('https://api.github.com/user', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    console.log("response", userResponse)
+
+    // You can return user info or create session/token here
+    res.json({
+      token: accessToken,
+      user: userResponse.data,
+    });
   } catch (error) {
-    console.error('Error dalam callback GitHub:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan server' });
+    console.error('GitHub login error:', error);
+    res.status(500).json({ error: 'Failed to login with GitHub' });
   }
 }

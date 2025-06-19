@@ -52,6 +52,9 @@ export const findTicketById = async (req: Request, res: Response): Promise<void>
     const findTicket = await prisma.ticket.findUnique({
       where: {
         id: String(ticketId)
+      },
+      include: {
+        comments: true
       }
     })  
     
@@ -89,8 +92,6 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
        res.status(404).json({ message: 'Project not found' });
     }
 
-
-    // Create the ticket
     const ticket = await prisma.ticket.create({
       data: {
         title,
@@ -168,107 +169,6 @@ export const changeStatusAndPrio = async (req: Request, res: Response): Promise<
   
 }
 
-export const CommentTicker =  async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { ticketId, userId, content } = req.body
-
-    const tickets = await prisma.ticket.findUnique({
-      where: { id: ticketId }
-    })
-
-    if (!tickets) {
-      res.status(404).json({
-        message: 'tickets is not found'
-      })
-    }
-
-    const users = await prisma.user.findUnique({
-      where: { id: userId }
-    })
-
-    if (!users) {
-       res.status(404).json({
-        message: 'users is not found'
-      })
-    }
-
-    const commentTicket = await prisma.comment.create({
-      data: {
-
-        ticketId,
-        userId,
-        content
-      }
-    })
-
-    res.status(201).json({
-      message: 'comment has been added',
-      data: {
-        commentTicket
-      }
-    })
-
-  } catch (err) {
-    res.status(500).json({
-      message: 'comment is not send'
-    })
-  }
-}
-
-export const findAllCommentByticket = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { ticketId } = req.params
-    console.log("id", ticketId)
-
-    const findTicket = await prisma.ticket.findUnique({
-      where: {
-        id: ticketId
-      }
-    })
-
-    if (!findTicket) {
-      res.status(400).json({
-        message: 'Ticket not found'
-      });
-    }
-
-    const allComment = await prisma.comment.findMany({
-      where: {
-        ticketId: ticketId
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            role: true
-          }
-        },
-        ticket: {
-          select: {
-            id: true,
-            title: true,
-            status: true,
-            priority: true,
-          }
-        }
-      },
-    })
-
-    res.status(200).json({
-      message: 'get all data',
-      data: allComment
-    })
-  } catch (err) {
-    res.status(500).send({
-      message: 'Cannot fetch comment',
-      error: err
-    })
-  } finally {
-    await prisma.$disconnect()
-  }
-}
 
 export const deletedTicket = async (req: Request, res: Response): Promise<void> => {
   try {

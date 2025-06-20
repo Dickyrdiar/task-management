@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
-import { generatePassword } from "../shared/generatePassword";
+import { generatePassword } from "../../shared/generatePassword";
 
 const prisma = new PrismaClient()
 

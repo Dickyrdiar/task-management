@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
 import bcrypt from 'bcrypt'
-import { generateToken } from "../utils/jwt";
+import { generateToken } from "../../utils/jwt";
+// import { generateToken } from "../utils/jwt";
 
 const prisma = new PrismaClient()
 
@@ -47,8 +48,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         role: users.role
       }
     })
-
-    console.log("user", users)
   } catch (error) {
     console.log("error", error)
     res.status(500).json({ error: 'Login failed' })
@@ -65,9 +64,8 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
         message: 'you must login first'
       })
     }
-
     if (token) {
-      await prisma.blacklistedToken.create({
+      await prisma.tokenBlacklist.create({
         data: {
           token: token,
           expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
@@ -82,6 +80,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     })
   } catch (err) {
     res.status(500).json({
+      error: err,
       message: 'logout is failed'
     })
   }

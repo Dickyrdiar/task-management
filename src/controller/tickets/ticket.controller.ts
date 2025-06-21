@@ -78,16 +78,11 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
     const {  status, title, priority, assignments = [] } = req.body; // Default assignments to an empty array
     const { projectId } = req.params;
 
-
-    // Check if projectId is provided
     if (!projectId) {
        res.status(400).json({ message: 'Project ID is required' });
     }
 
-    // Find the project by projectId
     const findProject = await prisma.project.findUnique({ where: { id: projectId } });
-
-    // Check if project exists
     if (!findProject) {
        res.status(404).json({ message: 'Project not found' });
     }

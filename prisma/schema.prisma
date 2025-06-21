@@ -42,7 +42,7 @@ model RefreshToken {
   id        String   @id @default(cuid())
   token     String   @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], name: "UserRefreshTokens")
   expiresAt DateTime
   createdAt DateTime @default(now())
 }
@@ -54,17 +54,14 @@ model User {
   username          String          @unique
   password          String
   role              String
-  // projects Project[] @relation("ProjectMembers")
-  // ownedProjects Project[] @relation("ProjectOwner")
-  // projectMembers ProjectMember[]
-  ownedProjects     Project[]       @relation("OwnedProjects")
-  projectMemberShip ProjectMember[]
-  tickets           Ticket[]        @relation("TicketAssignments")
-  RefreshToken      RefreshToken[]
-  Comment           Comment[]
   provider          String          @default("local") // 'local', 'github'
   githubId          String?         @unique
   avatar            String?
+  ownedProjects     Project[]       @relation("OwnedProjects")
+  projectMemberShip ProjectMember[]
+  tickets           Ticket[]        @relation("TicketAssignments")
+  refreshTokens     RefreshToken[]  @relation(name: "UserRefreshTokens")
+  Comment           Comment[]
 }
 
 model Ticket {

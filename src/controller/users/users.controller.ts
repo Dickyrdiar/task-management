@@ -21,8 +21,15 @@ export const findUsersById = async (req: Request, res: Response): Promise<void> 
   try {
     const { id } = req.params;
     const findUserById = await prisma.user.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        projectMemberShip: true,
+        tickets: true,
+        Comment: true
+      }
     });
+
+    console.log("user", findUserById)
     
     if (!findUserById) {
       res.status(404).json({ error: 'User not found' });

@@ -6,6 +6,6 @@ const router = Router()
 router.get('/', findAllProject)
 router.post('/', createProject)
 router.get('/:id', findProjectById)
-router.post('/:id/addUserToProject', addUserToProject)
+router.post('/:projectId/members', addUserToProject)
 
 export default router

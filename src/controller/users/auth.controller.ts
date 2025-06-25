@@ -33,12 +33,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const payload = {
-    id: users.id,
-    username: users.username,
-    role: users.role
-  };
-
     const accessToken = generateToken(users)
     const RefreshToken = generateRefreshToken(users)
 

@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@netlify/functions": "^4.1.5",
+    "@octokit/oauth-app": "^8.0.1",
     "@prisma/client": "6.4.1",
     "@prisma/migrate": "^6.9.0",
     "@types/cors": "^2.8.17",

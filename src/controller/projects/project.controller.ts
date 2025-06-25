@@ -119,12 +119,19 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
       }
     });
 
+    const addCreatorIntoMember = await prisma.projectMember.create({
+      data: {
+        projectId: project.id,
+        userId: project.ownerId,
+        role: project.ownerId !== null ? 'OWNER' : 'MEMBER'
+      }
+    })
 
     res.status(201).json({
       success: true,
       data: {
         project,
-        owner: userId,
+        owner: addCreatorIntoMember,
       }
     })
 

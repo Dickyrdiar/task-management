@@ -1,7 +1,7 @@
 {
   "name": "task-manage-app",
   "module": "index.ts",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bun": "latest",
@@ -14,7 +14,7 @@
     "vercel": "^43.1.0"
   },
   "scripts": {
-    "dev": "nodemon dev-server.ts",
+   "dev": "bun dev-server.ts",
     "vercel-build": "npx prisma generate && tsc",
     "build": "tsc",
     "start": "node dist/api/index.js",

@@ -1,9 +1,31 @@
-import { type VercelRequest, type VercelResponse } from '@vercel/node';
-import express, { type Request, type Response } from 'express';
-import cors from 'cors';
-import app from './app';
+// api/index.ts
 
-// === Vercel Handler ===
+import { type VercelRequest, type VercelResponse } from '@vercel/node';
+import express from 'express';
+import cors from 'cors';
+import projectRoutes from '../src/routes/projectRoutes';
+import userRouter from '../src/routes/userRoutes';
+import authRouter from '../src/routes/authRoutes';
+import ticketRouter from '../src/routes/ticketRoutes';
+// import lognWithGithub from '../src/routes/githubAuthRoutes'
+import { authMiddleware } from '../src/middleware/auth.middleware';
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// app.use('/api/loginWithGithub', lognWithGithub)
+app.use('/api/projects', authMiddleware, projectRoutes);
+app.use('/api/users', userRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/projects/:projectId/tickets', authMiddleware, ticketRouter);
+
+app.get('/', (_req, res) => {
+  res.status(200).json('Express + TypeScript + Bun + Prisma API');
+});
+
+// === Vercel-compatible Handler ===
 export default function handler(req: VercelRequest, res: VercelResponse) {
   const timeout = setTimeout(() => {
     if (!res.headersSent) {
@@ -13,10 +35,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     }
   }, 55_000);
 
-  // Run express as middleware
-  app(req, res)
+  app(req, res); // pass to express
 
-  // Clear timeout after response ends
   const originalEnd = res.end;
   res.end = function (
     chunkOrCb?: any | (() => void),
@@ -24,7 +44,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     cb?: () => void
   ) {
     clearTimeout(timeout);
-
     if (typeof chunkOrCb === 'function') {
       return originalEnd.call(this, chunkOrCb, '' as BufferEncoding, undefined);
     }

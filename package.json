@@ -14,7 +14,7 @@
     "vercel": "^43.1.0"
   },
   "scripts": {
-   "dev": "bun dev-server.ts",
+   "dev": "nodemon --exec bun dev-server.ts",
     "vercel-build": "npx prisma generate && tsc",
     "build": "tsc",
     "start": "node dist/api/index.js",

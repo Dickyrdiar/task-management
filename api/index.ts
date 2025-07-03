@@ -3,12 +3,12 @@
 import { type VercelRequest, type VercelResponse } from '@vercel/node';
 import express from 'express';
 import cors from 'cors';
-import projectRoutes from '../src/routes/projectRoutes';
-import userRouter from '../src/routes/userRoutes';
-import authRouter from '../src/routes/authRoutes';
-import ticketRouter from '../src/routes/ticketRoutes';
-// import lognWithGithub from '../src/routes/githubAuthRoutes'
-import { authMiddleware } from '../src/middleware/auth.middleware';
+import projectRoutes from '../src/routes/projectRoutes.js';
+import userRouter from '../src/routes/userRoutes.js';
+import authRouter from '../src/routes/authRoutes.js';
+import ticketRouter from '../src/routes/ticketRoutes.js';
+// import lognWithGithub from '../src/routes/githubAuthRoutes.js'
+import { authMiddleware } from '../src/middleware/auth.middleware.js';
 
 const app = express();
 

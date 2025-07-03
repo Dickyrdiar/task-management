@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import type { User } from '@prisma/client'
-import type { TokenPayload } from '../lib/schema/token_payload'
+import type { TokenPayload } from '../lib/schema/token_payload.js'
 
 export const generateToken = (user: User) => {
   const payload: TokenPayload = {

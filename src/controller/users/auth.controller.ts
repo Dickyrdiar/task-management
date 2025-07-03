@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
 import bcrypt from 'bcrypt'
-import { generateRefreshToken, generateToken, verifyRefreshToken } from "../../utils/jwt";
+import { generateRefreshToken, generateToken, verifyRefreshToken } from "../../utils/jwt.js";
 // import { getGithubOAuthApp } from '../../shared/authGithub'
 
 

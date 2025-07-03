@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { createUsers, findAllUsers, findUsersById } from "../controller/users/users.controller";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { RefreshTokn } from "../controller/users/auth.controller";
+import { createUsers, findAllUsers, findUsersById } from "../controller/users/users.controller.js";
+import { authMiddleware } from "../middleware/auth.middleware.js";
+import { RefreshTokn } from "../controller/users/auth.controller.js";
 
 const router = Router();
 

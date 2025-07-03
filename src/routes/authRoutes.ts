@@ -1,5 +1,6 @@
 import { Router } from "express";
-import {  loginUser, logout } from "../controller/users/auth.controller";
+// Update the import path below if the actual folder is 'controllers' or the filename is different (e.g., 'authController.ts')
+import { loginUser, logout } from "../controller/users/auth.controller.js";
 
 const router = Router();
 

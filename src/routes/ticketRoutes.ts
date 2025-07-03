@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { CreateComment, findAllCommentByticket } from '../controller/comments/comment.controller'
-import { changeStatusAndPrio, createTicket, findAllTicket, findTicketById } from "../controller/tickets/ticket.controller";
+import { CreateComment, findAllCommentByticket } from '../controller/comments/comment.controller.js'
+import { changeStatusAndPrio, createTicket, findAllTicket, findTicketById } from "../controller/tickets/ticket.controller.js";
 
 const router = Router({ mergeParams: true })
 

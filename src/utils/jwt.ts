@@ -28,3 +28,18 @@ export const verifyToken = (token: string) => {
     return null
   }
 }
+export const generateRefreshToken = (payload: object) => {
+  const secret = process.env.REFRESH_TOKEN;
+  if (!secret) {
+    throw new Error('REFRESH_TOKEN secret is not defined');
+  }
+  return jwt.sign(payload, secret, { expiresIn: '7d' });
+};
+
+export const verifyRefreshToken = (token: string) => {
+  const secret = process.env.REFRESH_TOKEN;
+  if (!secret) {
+    throw new Error('REFRESH_TOKEN secret is not defined');
+  }
+  return jwt.verify(token, secret);
+};

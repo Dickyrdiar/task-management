@@ -86,6 +86,48 @@ export const CreateComment = async (req: Request, res: Response): Promise<void> 
   }
 }
 
+export const updatedComment = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params
+  const { content, userId } = req.body
+
+  const findUsers = await prisma.user.findUnique({
+    where: { id: userId }
+  })
+
+  if (!findUsers) {
+    res.status(400).json({
+      message: 'user is not found'
+    })
+  }
+
+  try {
+    const updateComment = await prisma.comment.update({
+      where: {
+        id: id
+      },
+      data: {
+        content,
+        user: {
+          connect: { id: userId }
+        }
+      }
+    })
+
+    res.status(200).json({
+      success: true,
+      message: 'comment has been update',
+      data: {
+        updateComment
+      }
+    })
+  } catch (err) {
+    res.status(500).json({
+      message: 'failed update',
+      error: err
+    })
+  }
+}
+
 export const DeletedComment = async (req: Request, res: Response): Promise<void> => {
   try {
     const { commentId, userId } = req.body

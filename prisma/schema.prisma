@@ -25,6 +25,7 @@ model Project {
   owner          User            @relation("OwnedProjects", fields: [ownerId], references: [id])
   tickets        Ticket[]
   projectMembers ProjectMember[]
+  Agile          Agile[]
 }
 
 model ProjectMember {
@@ -38,11 +39,26 @@ model ProjectMember {
   @@unique([projectId, userId])
 }
 
+model Agile {
+  id           String @id @default(uuid())
+  sprintNumber String
+  userId       String
+  projectId    String
+
+  // Relasi
+  user    User     @relation(fields: [userId], references: [id])
+  project Project  @relation(fields: [projectId], references: [id])
+  tickets Ticket[] // satu sprint bisa punya banyak ticket
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model RefreshToken {
   id        String   @id @default(cuid())
   token     String   @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], name: "UserRefreshTokens")
   expiresAt DateTime
   createdAt DateTime @default(now())
 }
@@ -54,17 +70,15 @@ model User {
   username          String          @unique
   password          String
   role              String
-  // projects Project[] @relation("ProjectMembers")
-  // ownedProjects Project[] @relation("ProjectOwner")
-  // projectMembers ProjectMember[]
-  ownedProjects     Project[]       @relation("OwnedProjects")
-  projectMemberShip ProjectMember[]
-  tickets           Ticket[]        @relation("TicketAssignments")
-  RefreshToken      RefreshToken[]
-  Comment           Comment[]
   provider          String          @default("local") // 'local', 'github'
   githubId          String?         @unique
   avatar            String?
+  ownedProjects     Project[]       @relation("OwnedProjects")
+  projectMemberShip ProjectMember[]
+  tickets           Ticket[]        @relation("TicketAssignments")
+  refreshTokens     RefreshToken[]  @relation(name: "UserRefreshTokens")
+  Comment           Comment[]
+  Agile             Agile[]
 }
 
 model Ticket {
@@ -76,6 +90,8 @@ model Ticket {
   project     Project?       @relation(fields: [projectId], references: [id])
   assignments User[]         @relation("TicketAssignments")
   comments    Comment[]      @relation("TicketComments")
+  Agile       Agile?         @relation(fields: [agileId], references: [id])
+  agileId     String?
 }
 
 model Comment {

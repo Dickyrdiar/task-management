@@ -1,9 +1,9 @@
-import { Router } from "express";
-import { githubOauthCallback, redirectToGitHub } from '../controller/github_auth.controller'
+// import { Router } from "express";
+// import { githubOauthCallback, redirectToGitHub } from '../controller/github_auth.controller'
 
-const router = Router()
+// const router = Router()
 
-router.get('/', githubOauthCallback)
-router.get('/login', redirectToGitHub)
+// router.get('/', githubOauthCallback)
+// router.get('/login', redirectToGitHub)
 
-export default router
+// export default router

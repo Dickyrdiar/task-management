@@ -1,18 +1,22 @@
-import { type VercelRequest, type VercelResponse } from '@vercel/node'
-import app from './app'
+import { type VercelRequest, type VercelResponse } from '@vercel/node';
+import express, { type Request, type Response } from 'express';
+import cors from 'cors';
+import app from './app';
 
-export default function (req: VercelRequest, res: VercelResponse) {
-
+// === Vercel Handler ===
+export default function handler(req: VercelRequest, res: VercelResponse) {
   const timeout = setTimeout(() => {
-    if (res.headersSent) {
+    if (!res.headersSent) {
       res.status(503).json({
-          error: 'Request timed out. Please try again later.',
-      })
+        error: 'Request timed out. Please try again later.',
+      });
     }
-  }, 55_000)
+  }, 55_000);
 
-  app(req, res) 
+  // Run express as middleware
+  app(req, res)
 
+  // Clear timeout after response ends
   const originalEnd = res.end;
   res.end = function (
     chunkOrCb?: any | (() => void),
@@ -20,6 +24,7 @@ export default function (req: VercelRequest, res: VercelResponse) {
     cb?: () => void
   ) {
     clearTimeout(timeout);
+
     if (typeof chunkOrCb === 'function') {
       return originalEnd.call(this, chunkOrCb, '' as BufferEncoding, undefined);
     }

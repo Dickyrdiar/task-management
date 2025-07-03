@@ -37,9 +37,7 @@ export const CreateAgile = async (req: Request, res: Response): Promise<void> =>
       data: {
         userId,
         projectId,
-        sprintNumber,
-        startDate: new Date(), // Set to current date or replace as needed
-        endDate: new Date()    // Set to current date or replace as needed
+        sprintNumber
       }
     })
 

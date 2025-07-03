@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
 import bcrypt from 'bcrypt'
-import { generateRefreshToken, generateToken, verifyRefreshToken } from "../../utils/jwt";
-import { getGithubOAuthApp } from '../../shared/authGithub'
+import { generateRefreshToken, generateToken, verifyRefreshToken } from "../../utils/jwt.js";
+// import { getGithubOAuthApp } from '../../shared/authGithub'
 
 
 const prisma = new PrismaClient()
@@ -107,53 +107,53 @@ export const RefreshTokn = async (req: Request, res: Response): Promise<void> =>
 }
 
 
-export const loginWithGithub = async (req: Request, res: Response): Promise<void> => {
-  const app = await getGithubOAuthApp();
+// export const loginWithGithub = async (req: Request, res: Response): Promise<void> => {
+//   const app = await getGithubOAuthApp();
 
-  const { url } = app.getWebFlowAuthorizationUrl({
-    scopes: ["read:user", "user:email"],
-  });
+//   const { url } = app.getWebFlowAuthorizationUrl({
+//     scopes: ["read:user", "user:email"],
+//   });
 
-  res.redirect(url);
-};
+//   res.redirect(url);
+// };
 
-export const GithubCallback = async (req: Request, res: Response): Promise<void> => {
-  const { code, state } = req.query;
+// export const GithubCallback = async (req: Request, res: Response): Promise<void> => {
+//   const { code, state } = req.query;
 
-  if (!code || typeof code !== "string") {
-    res.status(400).send("Missing code");
-    return;
-  }
+//   if (!code || typeof code !== "string") {
+//     res.status(400).send("Missing code");
+//     return;
+//   }
 
-  try {
-    const githubApp = await getGithubOAuthApp();
-    const { authentication } = await githubApp.createToken({
-      code: code,
-      redirectUrl: process.env.GITHUB_CALLBACK_URL!,
-    });
+//   try {
+//     const githubApp = await getGithubOAuthApp();
+//     const { authentication } = await githubApp.createToken({
+//       code: code,
+//       redirectUrl: process.env.GITHUB_CALLBACK_URL!,
+//     });
 
-    const { token } = authentication;
+//     const { token } = authentication;
 
-    const userResponse = await fetch("https://api.github.com/user", {
-      headers: {
-        Authorization: `token ${token}`,
-        Accept: "application/vnd.github+json",
-      },
-    });
+//     const userResponse = await fetch("https://api.github.com/user", {
+//       headers: {
+//         Authorization: `token ${token}`,
+//         Accept: "application/vnd.github+json",
+//       },
+//     });
 
-    const user = await userResponse.json();
+//     const user = await userResponse.json();
 
-    console.log("GitHub user:", user);
+//     console.log("GitHub user:", user);
 
-    res.json({
-      message: "Login successful",
-      user,
-    });
-  } catch (error) {
-    console.error("GitHub OAuth error:", error);
-    res.status(500).send("GitHub OAuth error");
-  }
-};
+//     res.json({
+//       message: "Login successful",
+//       user,
+//     });
+//   } catch (error) {
+//     console.error("GitHub OAuth error:", error);
+//     res.status(500).send("GitHub OAuth error");
+//   }
+// };
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
   try {

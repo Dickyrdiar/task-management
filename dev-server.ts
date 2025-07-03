@@ -1,22 +1,28 @@
 // dev-server.ts
-import { createServer } from 'http'
-import { Server } from 'socket.io'
-import app from './api/app'
 
-const handler = app
-const server = createServer(handler)
-const io = new Server(server, {
-  cors: { origin: '*' },
-})
+import express from 'express';
+import cors from 'cors';
+import projectRoutes from './src/routes/projectRoutes';
+import userRouter from './src/routes/userRoutes';
+import authRouter from './src/routes/authRoutes';
+import ticketRouter from './src/routes/ticketRoutes';
+import { authMiddleware } from './src/middleware/auth.middleware';
 
-server.setTimeout(55_000)
+const app = express();
 
-io.on('connection', (socket) => {
-  console.log('a user connected')
-})
+app.use(cors());
+app.use(express.json());
 
-// Removed unused timeout block as 'res' is not defined in this context
+app.use('/api/projects', authMiddleware, projectRoutes);
+app.use('/api/users', userRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/projects/:projectId/tickets', authMiddleware, ticketRouter);
 
-server.listen(3001, () => {
-  console.log('🚀 Local dev server: http://localhost:3001')
-})
+app.get('/', (_req, res) => {
+  res.status(200).json('Running locally!');
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+});

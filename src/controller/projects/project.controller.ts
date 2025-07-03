@@ -1,4 +1,4 @@
-import { PrismaClient, ProjectRole } from "@prisma/client";
+import { PrismaClient, Prisma, ProjectRole } from "@prisma/client";
 import type { Request, Response } from "express";
 
 const prisma = new PrismaClient()
@@ -92,9 +92,9 @@ export const findProjectById = async (req: Request, res: Response): Promise<void
 
 export const createProject = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req?.user
+    const user = req?.user as { id: string; role: string } | undefined;
 
-    if (!userId) {
+    if (!user) {
       res.status(401).json({
         success: false,
         message: "user not found"
@@ -104,15 +104,16 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
 
     const { name, description } = req.body;
 
-    if (userId?.role !== 'PM' && userId?.role !== 'QA') {
-       res.status(500).json({ message: 'cannot create project you are not PM' })
+    if (user.role !== 'PM' && user.role !== 'QA') {
+       res.status(403).json({ message: 'cannot create project you are not PM or QA' })
+       return
     }
 
     const project = await prisma.project.create({
       data: {
         name,
         description,
-        ownerId: userId.id,
+        ownerId: user.id,
       },
       include: {
         owner: true

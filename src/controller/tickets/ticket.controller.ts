@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import type { Request, Response } from "express";
 import Redis from "ioredis";
-import redis from "../../shared/redisClient";
+import redis from "../../shared/redisClient.js";
 
 
 

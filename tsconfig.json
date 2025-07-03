@@ -19,7 +19,6 @@
     }
   },
   "include": [
-    "src/api/**/*.ts",
-    "src/routes/**/*.ts"
+    "api/**/*.ts"
   ]
 }

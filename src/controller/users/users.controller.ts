@@ -69,7 +69,7 @@ export const createUsers = async (req: Request, res: Response): Promise<void> =>
         email,
         username,
         password: await generatePassword(password),
-        role
+        role,
       }
     });
 

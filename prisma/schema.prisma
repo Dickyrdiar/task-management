@@ -83,7 +83,7 @@ model User {
   refreshTokens     RefreshToken[]  @relation(name: "UserRefreshTokens")
   Comment           Comment[]
   Agile             Agile[]
-  projectId         String
+  // projectId         String
 }
 
 model Ticket {

@@ -65,7 +65,7 @@ export const findProjectById = async (req: Request, res: Response): Promise<void
             status: true,
             priority: true,
           }
-        }
+        },
       }
     });
 

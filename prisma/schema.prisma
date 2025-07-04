@@ -26,6 +26,7 @@ model Project {
   tickets        Ticket[]
   projectMembers ProjectMember[]
   Agile          Agile[]
+  users          User[]          @relation("Project")
 }
 
 model ProjectMember {
@@ -40,12 +41,12 @@ model ProjectMember {
 }
 
 model Agile {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   sprintNumber String
   userId       String
   projectId    String
-  startDate    DateTime?
-  endDate      DateTime?
+  startDate    DateTime
+  endDate      DateTime
 
   // Relasi
   user    User     @relation(fields: [userId], references: [id])
@@ -77,10 +78,12 @@ model User {
   avatar            String?
   ownedProjects     Project[]       @relation("OwnedProjects")
   projectMemberShip ProjectMember[]
+  project           Project[]       @relation("Project")
   tickets           Ticket[]        @relation("TicketAssignments")
   refreshTokens     RefreshToken[]  @relation(name: "UserRefreshTokens")
   Comment           Comment[]
   Agile             Agile[]
+  projectId         String
 }
 
 model Ticket {

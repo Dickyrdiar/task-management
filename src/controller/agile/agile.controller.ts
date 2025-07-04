@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 
 export const CreateAgile = async (req: Request, res: Response): Promise<void> => {
   const { projectId } = req.params
-  const { userId, sprintNumber } = req.body
+  const { userId, sprintNumber, startDate, endDate } = req.body
 
   try {
     const users = await prisma.user.findUnique({
@@ -148,5 +148,34 @@ export const CaryOverTickets = async (req: Request, res: Response): Promise<void
     res.status(500).json({
       message: 'cary on sprint is failed'
     })
+  }
+}
+
+export const deletedAgile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      res.status(400).json({
+        success: false,
+        message: 'Agile id is required'
+      });
+      return;
+    }
+
+    await prisma.agile.delete({
+      where: { id }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Agile deleted successfully'
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete agile',
+      error: err
+    });
   }
 }

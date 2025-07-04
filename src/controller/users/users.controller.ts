@@ -23,9 +23,13 @@ export const findUsersById = async (req: Request, res: Response): Promise<void> 
     const findUserById = await prisma.user.findUnique({
       where: { id },
       include: {
-        projectMemberShip: true,
+        projectMemberShip: {
+          include: {
+            project: true
+          }
+        },
         tickets: true,
-        Comment: true
+        Comment: true,
       }
     });
 

@@ -37,7 +37,9 @@ export const CreateAgile = async (req: Request, res: Response): Promise<void> =>
       data: {
         userId,
         projectId,
-        sprintNumber
+        sprintNumber,
+        startDate,
+        endDate
       }
     })
 

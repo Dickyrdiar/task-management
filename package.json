@@ -21,7 +21,8 @@
     "vercel-build": "npx prisma generate && tsc",
     "build": "tsc",
     "start": "node dist/api/index.js",
-    "test": "jest"
+    "test": "jest",
+    "generate": "npx prisma generate"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"

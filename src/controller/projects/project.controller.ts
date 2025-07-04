@@ -20,13 +20,21 @@ export const findAllProject = async (req: Request, res: Response): Promise<void>
           }
         },
         owner: true,
-        tickets: {
+        Agile: {
           select: {
-            id: true,
-            title: true,
-            status: true,
-            priority: true,
-          }
+            sprintNumber: true,
+            startDate: true,
+            endDate: true,
+            tickets: {
+              select: {
+                title: true,
+                assignments: true,
+                status: true,
+                priority: true,
+                comments: true
+              }
+            }
+          },
         }
       }
     })

@@ -41,12 +41,12 @@ model ProjectMember {
 }
 
 model Agile {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   sprintNumber String
   userId       String
   projectId    String
-  startDate    DateTime
-  endDate      DateTime
+  startDate    DateTime?
+  endDate      DateTime?
 
   // Relasi
   user    User     @relation(fields: [userId], references: [id])

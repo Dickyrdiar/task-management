@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { addUserToProject, createProject, findAllProject, findProjectById } from "../controller/projects/project.controller";
-import { agileSystemById, CaryOverTickets, CreateAgile, findAllSprint } from '../controller/agile/agile.controller'
+import { addUserToProject, createProject, findAllProject, findProjectById } from "../controller/projects/project.controller.js";
+import { agileSystemById, CaryOverTickets, CreateAgile, findAllSprint } from '../controller/agile/agile.controller.js'
 
 const router = Router()
 

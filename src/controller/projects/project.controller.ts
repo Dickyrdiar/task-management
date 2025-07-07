@@ -72,6 +72,14 @@ export const findProjectById = async (req: Request, res: Response): Promise<void
             title: true,
             status: true,
             priority: true,
+            project: {
+              select: {
+                name: true,
+                description: true,
+                status: true,
+                Agile: true
+              }
+            }
           }
         },
       }

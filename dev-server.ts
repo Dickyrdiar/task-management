@@ -16,7 +16,7 @@ app.use(express.json());
 app.use('/api/projects', authMiddleware, projectRoutes);
 app.use('/api/users', userRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/projects/:projectId/tickets', authMiddleware, ticketRouter);
+app.use('/api/projects/:projectId', authMiddleware, ticketRouter);
 
 app.get('/', (_req, res) => {
   res.status(200).json('Running locally!');

@@ -19,26 +19,28 @@ declare global {
     }
   }
 }
-
 export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    // Ambil token dari header
     const authHeader = req.headers.authorization;
+    console.log('[AUTH] Incoming Header:', authHeader);
+
     if (!authHeader?.startsWith('Bearer ')) {
+      console.log('[AUTH] Missing Bearer token');
       res.status(401).json({ message: 'you are not authorized' });
       return;
     }
 
-    // Verifikasi token
     const token = authHeader.split(' ')[1];
     const decoded = verifyToken(token);
 
+    console.log('[AUTH] Decoded:', decoded);
+
     if (!decoded) {
+      console.log('[AUTH] Token invalid or expired');
       res.status(401).json({ message: 'you are not authorized' });
       return;
     }
 
-    // Simpan data user ke request
     req.user = {
       id: decoded.id,
       email: decoded.email,

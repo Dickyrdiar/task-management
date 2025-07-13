@@ -30,8 +30,10 @@ export const findAllTicket = async (req: Request, res: Response): Promise<void> 
         project: true,
       }
     })
+
+    console.log("ticket", tickets)
     
-    const ticket = await redis.get(`ticket: ${tickets}`)
+    // const ticket = await redis.get(`ticket: ${tickets}`)
     res.status(200).json({
       message: 'success',
       data: {
@@ -76,7 +78,7 @@ export const findTicketById = async (req: Request, res: Response): Promise<void>
 export const createTicket = async (req: Request, res: Response): Promise<void> => {
   try {
     const {  status, title, priority, assignments = [] } = req.body; // Default assignments to an empty array
-    const { projectId } = req.params;
+    const { projectId, agileId } = req.params;
 
     if (!projectId) {
        res.status(400).json({ message: 'Project ID is required' });
@@ -87,12 +89,26 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
        res.status(404).json({ message: 'Project not found' });
     }
 
+    const findAgile  = await prisma.agile.findUnique({
+      where: { id: agileId }
+    })
+
+     if (!findAgile) {
+       res.status(404).json({ message: 'Project not found' });
+    }
+
+    console.log("find id", {
+      agileId,
+      projectId
+    })
+
     const ticket = await prisma.ticket.create({
       data: {
         title,
         status,
         priority,
         projectId,
+        agileId,
         assignments: {
           connect: assignments.map((id: string) => ({ id })) // Ensure you are mapping over the correct field
         }

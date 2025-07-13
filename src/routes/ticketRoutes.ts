@@ -4,10 +4,10 @@ import { changeStatusAndPrio, createTicket, findAllTicket, findTicketById } from
 
 const router = Router({ mergeParams: true })
 
-router.get('/', findAllTicket)
-router.post('/', createTicket)
-router.get('/:id', findTicketById)
-router.put('/:id', changeStatusAndPrio)
+router.get('/agiles/:agileId/tickets', findAllTicket)
+router.post('/agiles/:agileId/tickets', createTicket)
+router.get('/:projectId/agiles/:agileId/:id', findTicketById)
+router.put('/:projectId/agiles/:agileId/:id', changeStatusAndPrio)
 
 // comment
 router.get('/:id/comments', findAllCommentByticket)

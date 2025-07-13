@@ -58,6 +58,14 @@ export const CreateAgile = async (req: Request, res: Response): Promise<void> =>
 } 
 
 export const findAllSprint = async (req: Request, res: Response): Promise<void> => {
+  const { projectId } = req.params
+
+  if (!projectId) {
+    res.status(400).json({
+      message: 'project is not find',
+    })
+  }
+
   try {
     const agiles = await prisma.agile.findMany()
     console.log("agile", agiles)
@@ -73,12 +81,20 @@ export const findAllSprint = async (req: Request, res: Response): Promise<void> 
 
 export const agileSystemById = async (req: Request, res: Response): Promise<void> => {
   try {
+    const { projectId } = req.params
     const { id } = req.params
 
     if (!id) {
       res.status(400).json({
         success: false,
         message: 'agile by id is not found'
+      })
+    }
+
+    if (!projectId) {
+      res.status(400).json({
+        success: false,
+        message: 'project is not found'
       })
     }
 
